@@ -563,12 +563,11 @@ elif page == "Explore Library":
     st.markdown('<p class="page-sub">Filter and browse 540+ pre-catalogued AI automation opportunities</p>', unsafe_allow_html=True)
 
     df = all_df()
-    with st.expander("Filters", expanded=True):
-        fc1, fc2, fc3, fc4 = st.columns(4)
-        with fc1: cats  = st.multiselect("Department",  list(AUTOMATION_IDEAS.keys()), default=list(AUTOMATION_IDEAS.keys()))
-        with fc2: effs  = st.multiselect("Effort",      ["Low","Medium","High"],       default=["Low","Medium","High"])
-        with fc3: imps  = st.multiselect("Impact",      ["Low","Medium","High"],       default=["High"])
-        with fc4: min_r = st.slider("Min ROI %", 0, 100, 60)
+    fc1, fc2, fc3, fc4 = st.columns(4)
+    with fc1: cats  = st.multiselect("Department",  list(AUTOMATION_IDEAS.keys()), default=list(AUTOMATION_IDEAS.keys()))
+    with fc2: effs  = st.multiselect("Effort",      ["Low","Medium","High"],       default=["Low","Medium","High"])
+    with fc3: imps  = st.multiselect("Impact",      ["Low","Medium","High"],       default=["High"])
+    with fc4: min_r = st.slider("Min ROI %", 0, 100, 60)
 
     filt = df[df["category"].isin(cats) & df["effort"].isin(effs) &
               df["impact"].isin(imps) & (df["roi"] >= min_r)].sort_values("roi", ascending=False)
