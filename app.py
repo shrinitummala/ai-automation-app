@@ -92,6 +92,13 @@ html, body, div, p, span, h1, h2, h3, h4, button, input, label, select, textarea
 .page-sub   { font-size: 0.9rem; color: #64748b; margin-bottom: 1.5rem; }
 
 hr.divider { border: none; border-top: 1px solid #f1f5f9; margin: 1.4rem 0; }
+
+/* Fix expander label */
+details summary p, details summary span, .streamlit-expanderHeader p {
+    color: #1e293b !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
