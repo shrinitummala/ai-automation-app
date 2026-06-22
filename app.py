@@ -556,7 +556,7 @@ elif page == "Explore Library":
     st.markdown('<p class="page-sub">Filter and browse 540+ pre-catalogued AI automation opportunities</p>', unsafe_allow_html=True)
 
     df = all_df()
-    with st.expander("🔎  Filters", expanded=True):
+    with st.expander("Filters", expanded=True):
         fc1, fc2, fc3, fc4 = st.columns(4)
         with fc1: cats  = st.multiselect("Department",  list(AUTOMATION_IDEAS.keys()), default=list(AUTOMATION_IDEAS.keys()))
         with fc2: effs  = st.multiselect("Effort",      ["Low","Medium","High"],       default=["Low","Medium","High"])
