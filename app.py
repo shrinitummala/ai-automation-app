@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit_authenticator as stauth
+import requests
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -68,7 +69,18 @@ with col_c:
             req_note  = st.text_area("Why do you need access?", height=80)
             submitted = st.form_submit_button("Submit Request", type="primary", use_container_width=True)
         if submitted and req_name and req_email:
-            st.success(f"Thanks {req_name}! Your request has been received. You'll get an email at {req_email} once your account is ready.")
+            resp = requests.post("https://formspree.io/f/xeebokbv", data={
+                "name":   req_name,
+                "email":  req_email,
+                "role":   req_role,
+                "reason": req_note,
+            })
+            if resp.status_code == 200:
+                st.success(f"Thanks {req_name}! Your request has been received. You'll hear back at {req_email} once your account is ready.")
+            else:
+                st.error("Something went wrong submitting your request. Please try again.")
+        elif submitted:
+            st.warning("Please fill in your name and email.")
 
 auth_status = st.session_state.get("authentication_status")
 name        = st.session_state.get("name", "")
