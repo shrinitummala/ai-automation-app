@@ -655,10 +655,19 @@ elif page == "Analyze Process":
             st.success(f"Found **{len(matches)} automation opportunities** for **{dept}**")
 
             m1, m2, m3, m4 = st.columns(4)
-            m1.metric("Matches",          len(matches))
-            m2.metric("Hours Saved/Year", f"{annual_hrs:,}")
-            m3.metric("Readiness Score",  f"{int(matches['roi'].mean())}%")
-            m4.metric("Top Pick",         matches.iloc[0]["idea"][:24]+"…")
+            for col, val, lbl in [
+                (m1, len(matches),                        "Matches"),
+                (m2, f"{annual_hrs:,}",                   "Hours Saved / Year"),
+                (m3, f"{int(matches['roi'].mean())}%",    "Readiness Score"),
+                (m4, matches.iloc[0]["idea"][:28]+"…",    "Top Pick"),
+            ]:
+                col.markdown(f"""
+                <div style="background:#ffffff;border:1px solid #e2e8f0;border-top:3px solid #4f46e5;
+                            border-radius:10px;padding:0.9rem 1rem 0.8rem">
+                  <div style="font-size:0.68rem;font-weight:700;color:#64748b;text-transform:uppercase;
+                              letter-spacing:0.7px;margin-bottom:5px">{lbl}</div>
+                  <div style="font-size:1.25rem;font-weight:700;color:#1e293b;line-height:1.2">{val}</div>
+                </div>""", unsafe_allow_html=True)
 
             st.markdown('<p class="section-hdr">Top Recommendations</p>', unsafe_allow_html=True)
             rank_col = ["#d97706","#94a3b8","#b45309","#4f46e5","#4f46e5","#4f46e5"]
