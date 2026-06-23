@@ -93,16 +93,24 @@ html, body, div, p, span, h1, h2, h3, h4, button, input, label, select, textarea
 
 hr.divider { border: none; border-top: 1px solid #f1f5f9; margin: 1.4rem 0; }
 
-/* Hide broken sidebar collapse icon text, replace with hamburger */
-[data-testid="collapsedControl"] { display: none !important; }
-button[kind="header"] { display: none !important; }
-section[data-testid="stSidebarCollapseButton"] button::before {
-    content: "☰";
-    font-size: 1.2rem;
-    color: #4f46e5;
+/* Sidebar collapse button — hide broken Material icon text, inject hamburger */
+[data-testid="stSidebarCollapseButton"] button {
+    background: #f5f3ff !important;
+    border: 1.5px solid #c7d2fe !important;
+    border-radius: 8px !important;
+    width: 36px !important; height: 36px !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    overflow: hidden !important;
 }
-section[data-testid="stSidebarCollapseButton"] button svg { display: none; }
-section[data-testid="stSidebarCollapseButton"] button span { display: none; }
+[data-testid="stSidebarCollapseButton"] button::after {
+    content: "☰";
+    font-size: 1.1rem;
+    color: #4f46e5;
+    line-height: 1;
+}
+[data-testid="stSidebarCollapseButton"] button * { display: none !important; }
 
 /* Fix expander label */
 details summary p, details summary span, .streamlit-expanderHeader p {
