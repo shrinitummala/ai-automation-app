@@ -514,27 +514,26 @@ with st.sidebar:
     df_s = all_df()
     st.caption(f"**{len(df_s)}** automation ideas across **15** functions")
 
-# Replace broken sidebar icon text with arrow characters via JS
-components.html("""
+# Replace broken sidebar icon text with arrow characters via JS in main document
+st.markdown("""
 <script>
 function fixSidebarBtn() {
     document.querySelectorAll('button').forEach(btn => {
         const txt = btn.innerText || '';
         if (txt.includes('keyboard_double_arrow_left')) {
-            btn.innerHTML = '<span style="font-size:1.1rem;color:#4f46e5">◀</span>';
-            btn.style.cssText += 'background:#f5f3ff;border:1.5px solid #c7d2fe;border-radius:8px;';
+            btn.innerHTML = '<span style="font-size:1.1rem;color:#4f46e5;pointer-events:none">◀</span>';
+            btn.style.cssText += 'background:#f5f3ff!important;border:1.5px solid #c7d2fe!important;border-radius:8px!important;';
         }
         if (txt.includes('keyboard_double_arrow_right')) {
-            btn.innerHTML = '<span style="font-size:1.1rem;color:#4f46e5">▶</span>';
-            btn.style.cssText += 'background:#f5f3ff;border:1.5px solid #c7d2fe;border-radius:8px;';
+            btn.innerHTML = '<span style="font-size:1.1rem;color:#4f46e5;pointer-events:none">▶</span>';
+            btn.style.cssText += 'background:#f5f3ff!important;border:1.5px solid #c7d2fe!important;border-radius:8px!important;';
         }
     });
 }
-// Run on load and observe DOM changes
 fixSidebarBtn();
-new MutationObserver(fixSidebarBtn).observe(document.body, { childList: true, subtree: true });
+new MutationObserver(fixSidebarBtn).observe(document.body, {childList:true, subtree:true});
 </script>
-""", height=0)
+""", unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════════════════════════
 # DASHBOARD
