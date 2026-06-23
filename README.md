@@ -5,7 +5,7 @@ A Streamlit dashboard for exploring and prioritizing AI automation opportunities
 ## Features
 
 - **Dashboard** — KPIs, ROI by function, quick-win highlights
-- **Explore Library** — 540+ automation ideas filterable by department, effort, impact, and ROI
+- **Explore Library** — 225 automation ideas filterable by department, effort, impact, and ROI
 - **Process Analyzer** — Describe a process and get matched automation recommendations
 - **Priority Map** — Interactive scatter, heatmap, and bar-chart views
 - **Risk Assessment** — 6-factor readiness scoring with radar chart

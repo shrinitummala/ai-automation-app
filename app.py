@@ -444,7 +444,7 @@ with st.sidebar:
 
     st.divider()
     df_s = all_df()
-    st.caption(f"**{len(df_s)}** automation ideas across **9** functions")
+    st.caption(f"**{len(df_s)}** automation ideas across **15** functions")
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -560,7 +560,7 @@ if page == "Dashboard":
 # ════════════════════════════════════════════════════════════════════════════
 elif page == "Explore Library":
     st.markdown('<p class="page-title">Automation Idea Library</p>', unsafe_allow_html=True)
-    st.markdown('<p class="page-sub">Filter and browse 540+ pre-catalogued AI automation opportunities</p>', unsafe_allow_html=True)
+    st.markdown('<p class="page-sub">Filter and browse 225 pre-catalogued AI automation opportunities</p>', unsafe_allow_html=True)
 
     df = all_df()
     fc1, fc2, fc3, fc4 = st.columns(4)
@@ -990,7 +990,7 @@ elif page == "Help":
     st.markdown('<p class="page-sub">Everything you need to get the most out of AutomateIQ</p>', unsafe_allow_html=True)
 
     steps = [
-        ("📚","1. Explore Library",      "Filter 540+ automation ideas by department, effort, impact, and minimum ROI."),
+        ("📚","1. Explore Library",      "Filter 225 automation ideas by department, effort, impact, and minimum ROI."),
         ("🔍","2. Analyze Process",      "Describe a specific process to get matched recommendations and hours-saved estimates."),
         ("🗺️","3. Priority Map",         "View all opportunities in an interactive priority matrix, heatmap, or bar charts."),
         ("⚠️","4. Risk Assessment",      "Score your org across 6 readiness factors and get tailored mitigation advice."),
