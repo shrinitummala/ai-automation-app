@@ -99,6 +99,23 @@ details summary p, details summary span, .streamlit-expanderHeader p {
     font-size: 0.95rem !important;
     font-weight: 600 !important;
 }
+
+/* ROI tooltip */
+.roi-tip { position: relative; display: inline-block; cursor: help; border-bottom: 1px dashed #818cf8; }
+.roi-tip .roi-tooltip {
+    visibility: hidden; opacity: 0;
+    background: #1e293b; color: #f8fafc;
+    font-size: 0.72rem; font-weight: 400; line-height: 1.7;
+    border-radius: 8px; padding: 0.5rem 0.8rem;
+    position: absolute; z-index: 999;
+    bottom: 110%; left: 50%; transform: translateX(-50%);
+    white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    transition: opacity 0.15s; pointer-events: none;
+}
+.roi-tip:hover .roi-tooltip { visibility: visible; opacity: 1; }
+.formula-hint { font-size: 0.7rem; color: #94a3b8; font-family: monospace;
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    border-radius: 5px; padding: 2px 7px; display: inline-block; margin-top: 3px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -448,6 +465,15 @@ def build_cost_badge(e):
     cost = BUILD_COST[e]
     return f'<span class="badge badge-indigo">Build cost: ${cost:,}</span>'
 
+def roi_with_tip(roi, time_saved, effort):
+    annual = time_saved * HOURLY_RATE * 52
+    cost   = BUILD_COST[effort]
+    return f"""<span class="roi-tip">{roi}%<span class="roi-tooltip">
+ROI = (Annual Savings − Build Cost) ÷ Build Cost × 100<br>
+= (${annual:,} − ${cost:,}) ÷ ${cost:,} × 100<br>
+= <b>{int((annual-cost)/cost*100)}%</b> &nbsp;·&nbsp; hover formula based on ${HOURLY_RATE}/hr
+</span></span>"""
+
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -571,8 +597,8 @@ if page == "Dashboard":
                   {effort_badge(r['effort'])} {impact_badge(r['impact'])} {build_cost_badge(r['effort'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                 </div>
                 <div style="text-align:right;flex-shrink:0">
-                  <div style="font-size:1.6rem;font-weight:800;color:#4f46e5;line-height:1">{r['roi']}%</div>
-                  <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px">ROI</div>
+                  <div style="font-size:1.6rem;font-weight:800;color:#4f46e5;line-height:1">{roi_with_tip(r['roi'],r['time_saved'],r['effort'])}</div>
+                  <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px">ROI (hover for formula)</div>
                 </div>
               </div>
             </div>""", unsafe_allow_html=True)
@@ -685,8 +711,8 @@ elif page == "Analyze Process":
                       {effort_badge(r['effort'])} {impact_badge(r['impact'])} {build_cost_badge(r['effort'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                     </div>
                     <div style="text-align:right;flex-shrink:0">
-                      <div style="font-size:1.5rem;font-weight:800;color:#4f46e5">{r['roi']}%</div>
-                      <div style="font-size:0.65rem;color:#94a3b8">ROI</div>
+                      <div style="font-size:1.5rem;font-weight:800;color:#4f46e5">{roi_with_tip(r['roi'],r['time_saved'],r['effort'])}</div>
+                      <div style="font-size:0.65rem;color:#94a3b8">ROI (hover)</div>
                     </div>
                   </div>
                 </div>""", unsafe_allow_html=True)
@@ -871,6 +897,7 @@ elif page == "ROI Calculator":
     <div class="phase-box">
       <h4>Layer 1 — Build Effort &nbsp;·&nbsp; One-Time Investment</h4>
       <p>All upfront costs to design, build, integrate, and launch the automation.</p>
+      <span class="formula-hint">Build Cost = Tooling + Consulting + (Internal hrs × Rate) + Training × (1 + Contingency%)</span>
     </div>""", unsafe_allow_html=True)
 
     l1a, l1b, l1c = st.columns(3)
@@ -901,6 +928,7 @@ elif page == "ROI Calculator":
     <div class="phase-box">
       <h4>Layer 2 — Run Savings &nbsp;·&nbsp; Recurring Value</h4>
       <p>Ongoing savings generated every week once the automation is live.</p>
+      <span class="formula-hint">Net Savings/wk = (hrs_saved × rate × coverage%) + (cycles × error_rate × cost_per_error × coverage% × 0.85) − run_cost</span>
     </div>""", unsafe_allow_html=True)
 
     l2a, l2b, l2c = st.columns(3)
@@ -934,6 +962,7 @@ elif page == "ROI Calculator":
     <div class="phase-box">
       <h4>Layer 3 — Payback Period &nbsp;·&nbsp; Break-Even & Returns</h4>
       <p>How long until the investment pays for itself, and what returns accumulate beyond that.</p>
+      <span class="formula-hint">Payback (mo) = Build Cost ÷ (Annual Savings ÷ 12) &nbsp;·&nbsp; Net ROI = (Annual Savings × Years) − Build Cost</span>
     </div>""", unsafe_allow_html=True)
 
     payback_mo  = (total_build / (annual_save / 12)) if annual_save > 0 else 999
@@ -1049,8 +1078,8 @@ elif page == "Implementation Plan":
                       {effort_badge(r['effort'])} {impact_badge(r['impact'])} {build_cost_badge(r['effort'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                     </div>
                     <div style="text-align:right;flex-shrink:0">
-                      <div style="font-size:1.4rem;font-weight:800;color:#4f46e5">{r['roi']}%</div>
-                      <div style="font-size:0.62rem;color:#94a3b8">ROI</div>
+                      <div style="font-size:1.4rem;font-weight:800;color:#4f46e5">{roi_with_tip(r['roi'],r['time_saved'],r['effort'])}</div>
+                      <div style="font-size:0.62rem;color:#94a3b8">ROI (hover)</div>
                     </div>
                   </div>
                 </div>""", unsafe_allow_html=True)
