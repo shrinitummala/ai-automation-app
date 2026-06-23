@@ -514,6 +514,7 @@ if page == "Dashboard":
             hovertemplate="<b>%{y}</b><br>Avg ROI: %{x:.0f}%<extra></extra>",
         ))
         styled_fig(fig, 370)
+        fig.update_layout(title="Average ROI % by Business Function")
         fig.update_xaxes(range=[0, 108], title_text="Avg ROI %")
         st.plotly_chart(fig, use_container_width=True)
 
@@ -532,7 +533,7 @@ if page == "Dashboard":
                             x=0.5, y=0.5, showarrow=False,
                             font=dict(color="#1e293b", size=16, family="Inter"))
         styled_fig(fig2, 370)
-        fig2.update_layout(showlegend=True,
+        fig2.update_layout(title="Automation Ideas by Business Function", showlegend=True,
             legend=dict(font=dict(size=9), orientation="v"))
         st.plotly_chart(fig2, use_container_width=True)
 
@@ -552,6 +553,7 @@ if page == "Dashboard":
             hovertemplate="Effort %{y} / Impact %{x}: %{z} ideas<extra></extra>",
         ))
         styled_fig(fig3, 260)
+        fig3.update_layout(title="Idea Count by Effort × Impact")
         fig3.update_xaxes(title_text="Impact")
         fig3.update_yaxes(title_text="Effort")
         st.plotly_chart(fig3, use_container_width=True)
@@ -714,6 +716,7 @@ elif page == "Priority Map":
         fig.add_annotation(x=1,y=3.48,text="⚡ Quick Win Zone",showarrow=False,
                            font=dict(color="#4f46e5",size=11,family="Inter"))
         styled_fig(fig, 500)
+        fig.update_layout(title="Automation Opportunity Priority Matrix — Effort vs Impact")
         st.plotly_chart(fig, use_container_width=True)
 
     elif view == "ROI Heatmap":
@@ -728,6 +731,7 @@ elif page == "Priority Map":
             hovertemplate="<b>%{y}</b><br>Effort: %{x}<br>Avg ROI: %{z:.0f}%<extra></extra>",
         ))
         styled_fig(fig, 440)
+        fig.update_layout(title="Average ROI % by Business Function and Build Effort")
         st.plotly_chart(fig, use_container_width=True)
 
     else:
@@ -746,6 +750,7 @@ elif page == "Priority Map":
                 textfont=dict(size=10,color="#374151"), showlegend=False,
             ), row=1, col=ci)
         styled_fig(fig, 420)
+        fig.update_layout(title="Function Breakdown — Ideas, Avg ROI & Weekly Hours Saved")
         fig.update_xaxes(tickangle=38, tickfont=dict(size=9))
         st.plotly_chart(fig, use_container_width=True)
 
@@ -820,6 +825,7 @@ elif page == "Risk Assessment":
                              gridcolor="#f1f5f9",linecolor="#e2e8f0"),
         ))
         styled_fig(fig2, 290)
+        fig2.update_layout(title="Readiness Factor Radar")
         st.plotly_chart(fig2, use_container_width=True)
 
     st.markdown('<p class="section-hdr">Recommendations</p>', unsafe_allow_html=True)
@@ -1055,7 +1061,8 @@ elif page == "Implementation Plan":
                          orientation="h", color_discrete_map=pcols,
                          labels={"Duration":"Duration (months)","Task":""})
             styled_fig(fig, max(300, len(gantt)*28))
-            fig.update_layout(xaxis_title="Month",barmode="overlay",
+            fig.update_layout(title="Phased Implementation Timeline",
+                              xaxis_title="Month",barmode="overlay",
                               legend=dict(orientation="h",y=-0.14))
             st.plotly_chart(fig, use_container_width=True)
 
