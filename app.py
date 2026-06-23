@@ -93,8 +93,10 @@ html, body, div, p, span, h1, h2, h3, h4, button, input, label, select, textarea
 
 hr.divider { border: none; border-top: 1px solid #f1f5f9; margin: 1.4rem 0; }
 
-/* Sidebar collapse button — hide broken Material icon text, inject hamburger */
-[data-testid="stSidebarCollapseButton"] button {
+/* Sidebar toggle buttons — hide broken Material icon text, inject hamburger */
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="stSidebarCollapsedControl"] button,
+[data-testid="collapsedControl"] button {
     background: #f5f3ff !important;
     border: 1.5px solid #c7d2fe !important;
     border-radius: 8px !important;
@@ -104,13 +106,17 @@ hr.divider { border: none; border-top: 1px solid #f1f5f9; margin: 1.4rem 0; }
     font-size: 0 !important;
     overflow: hidden !important;
 }
-[data-testid="stSidebarCollapseButton"] button::after {
+[data-testid="stSidebarCollapseButton"] button::after,
+[data-testid="stSidebarCollapsedControl"] button::after,
+[data-testid="collapsedControl"] button::after {
     content: "☰";
     font-size: 1.1rem;
     color: #4f46e5;
     line-height: 1;
 }
-[data-testid="stSidebarCollapseButton"] button * { display: none !important; }
+[data-testid="stSidebarCollapseButton"] button *,
+[data-testid="stSidebarCollapsedControl"] button *,
+[data-testid="collapsedControl"] button * { display: none !important; }
 
 /* Fix expander label */
 details summary p, details summary span, .streamlit-expanderHeader p {
