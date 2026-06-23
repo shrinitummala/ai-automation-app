@@ -444,6 +444,10 @@ def payback_badge(p):
     cls = "badge-green" if p <= 6 else ("badge-yellow" if p <= 12 else "badge-red")
     return f'<span class="badge {cls}">Payback: {p}mo</span>'
 
+def build_cost_badge(e):
+    cost = BUILD_COST[e]
+    return f'<span class="badge badge-indigo">Build cost: ${cost:,}</span>'
+
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -562,7 +566,7 @@ if page == "Dashboard":
                 <div style="flex:1;min-width:0">
                   <div class="idea-title">{r['idea']}</div>
                   <div class="idea-cat">{CAT_ICONS[r['category']]} {r['category']}</div>
-                  {effort_badge(r['effort'])} {impact_badge(r['impact'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
+                  {effort_badge(r['effort'])} {impact_badge(r['impact'])} {build_cost_badge(r['effort'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                 </div>
                 <div style="text-align:right;flex-shrink:0">
                   <div style="font-size:1.6rem;font-weight:800;color:#4f46e5;line-height:1">{r['roi']}%</div>
@@ -604,7 +608,7 @@ elif page == "Explore Library":
                   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
                     <div style="flex:1">
                       <div class="idea-title">{r['idea']}</div>
-                      {effort_badge(r['effort'])} {impact_badge(r['impact'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
+                      {effort_badge(r['effort'])} {impact_badge(r['impact'])} {build_cost_badge(r['effort'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                     </div>
                     <div style="background:#eef2ff;border-radius:8px;padding:6px 14px;text-align:center;flex-shrink:0">
                       <div style="font-size:1.15rem;font-weight:800;color:#4f46e5">{r['roi']}%</div>
@@ -667,7 +671,7 @@ elif page == "Analyze Process":
                     <div style="flex:1">
                       <div class="idea-title">{r['idea']}</div>
                       <div class="idea-cat">{CAT_ICONS[r['category']]} {r['category']}</div>
-                      {effort_badge(r['effort'])} {impact_badge(r['impact'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
+                      {effort_badge(r['effort'])} {impact_badge(r['impact'])} {build_cost_badge(r['effort'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                     </div>
                     <div style="text-align:right;flex-shrink:0">
                       <div style="font-size:1.5rem;font-weight:800;color:#4f46e5">{r['roi']}%</div>
@@ -1027,7 +1031,7 @@ elif page == "Implementation Plan":
                     <div style="flex:1">
                       <div class="idea-title">{r['idea']}</div>
                       <div class="idea-cat">{CAT_ICONS[r['category']]} {r['category']}</div>
-                      {effort_badge(r['effort'])} {impact_badge(r['impact'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
+                      {effort_badge(r['effort'])} {impact_badge(r['impact'])} {build_cost_badge(r['effort'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                     </div>
                     <div style="text-align:right;flex-shrink:0">
                       <div style="font-size:1.4rem;font-weight:800;color:#4f46e5">{r['roi']}%</div>
