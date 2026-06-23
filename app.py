@@ -546,14 +546,7 @@ if page == "Dashboard":
             hovertemplate="<b>%{y}</b><br><br>Formula: Avg ROI % = Σ(idea ROI scores) ÷ n<br>%{customdata}<extra></extra>",
         ))
         styled_fig(fig, 370)
-        fig.update_layout(
-            title="Average ROI % by Business Function",
-            annotations=[dict(
-                text="Hover a bar to see the formula",
-                x=0, y=-0.08, xref="paper", yref="paper",
-                showarrow=False, font=dict(size=10, color="#94a3b8"), xanchor="left"
-            )]
-        )
+        fig.update_layout(title="Average ROI % by Business Function")
         fig.update_xaxes(range=[0, 108], title_text="Avg ROI %")
         st.plotly_chart(fig, use_container_width=True)
 
