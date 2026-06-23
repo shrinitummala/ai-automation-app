@@ -1,0 +1,14 @@
+credentials:
+  usernames:
+    srini:
+      email: shrini.tummala@gmail.com
+      name: Srini Tummala
+      password: "$2b$12$o6FGp6HgXDrobG1AVUvh8eNr5tyXIiRizbD5umPGxkIqeobvUyShC"  # AutomateIQ2024!
+
+cookie:
+  expiry_days: 7
+  key: automate_iq_secret_key_2024
+  name: automate_iq_auth
+
+preauthorized:
+  emails: []

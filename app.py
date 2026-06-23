@@ -1,10 +1,13 @@
 import streamlit as st
+import streamlit_authenticator as stauth
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import datetime
 import time
+import yaml
+from yaml.loader import SafeLoader
 
 st.set_page_config(
     page_title="AutomateIQ — AI Process Automation",
@@ -13,6 +16,45 @@ st.set_page_config(
     initial_sidebar_state="expanded",
     menu_items={}
 )
+
+# ── Google Analytics ──────────────────────────────────────────────────────────
+# Replace G-XXXXXXXXXX with your GA4 Measurement ID once you have it
+GA_ID = "G-XXXXXXXXXX"
+st.markdown(f"""
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', '{GA_ID}');
+</script>
+""", unsafe_allow_html=True)
+
+# ── Authentication ────────────────────────────────────────────────────────────
+with open("config.yaml") as f:
+    config = yaml.load(f, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config["credentials"],
+    config["cookie"]["name"],
+    config["cookie"]["key"],
+    config["cookie"]["expiry_days"],
+)
+
+name, authentication_status, username = authenticator.login(
+    location="main",
+    fields={"Form name": "AutomateIQ — Sign In", "Username": "Username", "Password": "Password", "Login": "Sign In"}
+)
+
+if authentication_status is False:
+    st.error("Incorrect username or password.")
+    st.stop()
+elif authentication_status is None:
+    st.stop()
+
+# ── Authenticated — show logout in sidebar ────────────────────────────────────
+with st.sidebar:
+    authenticator.logout("Sign Out", location="sidebar")
 
 # Minimal, reliable CSS — only targets elements Streamlit exposes stably
 st.markdown("""
@@ -483,8 +525,8 @@ ROI = (Annual Savings − Build Cost) ÷ Build Cost × 100<br>
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## ⚡ AutomateIQ")
-    st.caption("AI Process Intelligence Platform")
+    st.markdown(f"## ⚡ AutomateIQ")
+    st.caption(f"Signed in as **{name}**")
     st.divider()
 
     page = st.radio(
