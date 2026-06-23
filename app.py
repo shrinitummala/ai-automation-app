@@ -532,15 +532,28 @@ if page == "Dashboard":
                   .agg(avg_roi=("roi","mean"), count=("idea","count"))
                   .reset_index().sort_values("avg_roi"))
         cat_df["label"] = cat_df["category"].map(CAT_ICONS) + "  " + cat_df["category"]
+        cat_df["formula"] = cat_df.apply(
+            lambda r: f"Sum of benchmark ROI scores ÷ idea count<br>"
+                      f"= {r['avg_roi']*r['count']:.0f} ÷ {int(r['count'])} ideas<br>"
+                      f"= <b>{r['avg_roi']:.0f}%</b><br>"
+                      f"<i style='color:#94a3b8'>Scores sourced from McKinsey & Gartner benchmarks</i>", axis=1)
         fig = go.Figure(go.Bar(
             x=cat_df["avg_roi"], y=cat_df["label"], orientation="h",
             marker_color="#4f46e5",
             text=cat_df["avg_roi"].map("{:.0f}%".format),
             textposition="outside",
-            hovertemplate="<b>%{y}</b><br>Avg ROI: %{x:.0f}%<extra></extra>",
+            customdata=cat_df["formula"],
+            hovertemplate="<b>%{y}</b><br><br>Formula: Avg ROI % = Σ(idea ROI scores) ÷ n<br>%{customdata}<extra></extra>",
         ))
         styled_fig(fig, 370)
-        fig.update_layout(title="Average ROI % by Business Function")
+        fig.update_layout(
+            title="Average ROI % by Business Function",
+            annotations=[dict(
+                text="Hover a bar to see the formula",
+                x=0, y=-0.08, xref="paper", yref="paper",
+                showarrow=False, font=dict(size=10, color="#94a3b8"), xanchor="left"
+            )]
+        )
         fig.update_xaxes(range=[0, 108], title_text="Avg ROI %")
         st.plotly_chart(fig, use_container_width=True)
 
