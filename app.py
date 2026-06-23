@@ -841,65 +841,137 @@ elif page == "Risk Assessment":
 
 
 # ════════════════════════════════════════════════════════════════════════════
-# ROI CALCULATOR
+# ROI CALCULATOR — 3-Layer Model
 # ════════════════════════════════════════════════════════════════════════════
 elif page == "ROI Calculator":
-    st.markdown('<p class="page-title">ROI Calculator</p>', unsafe_allow_html=True)
-    st.markdown('<p class="page-sub">Build the financial business case for your automation investment</p>', unsafe_allow_html=True)
+    st.markdown('<p class="page-title">3-Layer ROI Model</p>', unsafe_allow_html=True)
+    st.markdown('<p class="page-sub">Build a structured business case across build investment, recurring savings, and payback horizon</p>', unsafe_allow_html=True)
 
-    rc1, rc2, rc3 = st.columns(3)
-    with rc1:
-        rate   = st.number_input("Hourly employee cost ($)", value=65, min_value=10)
-        hrs_wk = st.number_input("Process hours / week",     value=20, min_value=1)
-    with rc2:
-        err_rt  = st.slider("Error rate (%)", 0, 50, 10)
-        err_cst = st.number_input("Cost per error ($)", value=500, min_value=0)
-    with rc3:
-        auto_p   = st.slider("Automation coverage (%)", 10, 100, 70)
-        impl_cst = st.number_input("Implementation cost ($)", value=25000, min_value=0, step=1000)
+    # ── Layer 1: Build Effort (one-time) ─────────────────────────────────────
+    st.markdown("""
+    <div class="phase-box">
+      <h4>Layer 1 — Build Effort &nbsp;·&nbsp; One-Time Investment</h4>
+      <p>All upfront costs to design, build, integrate, and launch the automation.</p>
+    </div>""", unsafe_allow_html=True)
 
-    annual_labor  = hrs_wk * rate * 52
-    annual_errors = (err_rt/100) * (hrs_wk*52/8) * err_cst
-    save_labor    = annual_labor  * (auto_p/100)
-    save_errors   = annual_errors * (auto_p/100) * 0.85
-    total_save    = save_labor + save_errors
-    net_roi       = total_save - impl_cst
-    roi_pct       = (net_roi/impl_cst*100) if impl_cst else 0
-    payback       = (impl_cst/(total_save/12)) if total_save else 999
+    l1a, l1b, l1c = st.columns(3)
+    with l1a:
+        tool_cost    = st.number_input("Tooling & licensing ($)",   value=5_000,  min_value=0, step=500)
+        consult_cost = st.number_input("Consulting / vendor ($)",   value=10_000, min_value=0, step=500)
+    with l1b:
+        internal_hrs = st.number_input("Internal build hours",      value=80,     min_value=0, step=10)
+        internal_rate= st.number_input("Internal hourly rate ($)",  value=75,     min_value=10)
+    with l1c:
+        training_cost= st.number_input("Training & change mgmt ($)",value=3_000,  min_value=0, step=500)
+        contingency  = st.slider("Contingency buffer (%)", 0, 30, 15)
 
-    st.divider()
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Annual Process Cost",  f"${annual_labor+annual_errors:,.0f}")
-    m2.metric("Annual Savings",       f"${total_save:,.0f}", f"+{auto_p}%")
-    m3.metric("3-Year Net ROI",       f"${net_roi*3:,.0f}",  f"{roi_pct:.0f}%")
-    m4.metric("Payback Period",       f"{payback:.1f} mo")
+    base_build  = tool_cost + consult_cost + (internal_hrs * internal_rate) + training_cost
+    total_build = base_build * (1 + contingency / 100)
 
-    years = list(range(1,6))
+    st.markdown(f"""
+    <div class="kpi-card" style="margin-top:0.8rem">
+      <div class="kpi-label">Total Build Investment (one-time)</div>
+      <div class="kpi-value">${total_build:,.0f}</div>
+      <div class="kpi-sub">Base ${base_build:,.0f} + {contingency}% contingency</div>
+    </div>""", unsafe_allow_html=True)
+
+    st.markdown('<hr class="divider">', unsafe_allow_html=True)
+
+    # ── Layer 2: Run Savings (recurring) ─────────────────────────────────────
+    st.markdown("""
+    <div class="phase-box">
+      <h4>Layer 2 — Run Savings &nbsp;·&nbsp; Recurring Value</h4>
+      <p>Ongoing savings generated every week once the automation is live.</p>
+    </div>""", unsafe_allow_html=True)
+
+    l2a, l2b, l2c = st.columns(3)
+    with l2a:
+        hrs_saved_wk = st.number_input("Hours saved per week",       value=20, min_value=1)
+        emp_rate     = st.number_input("Fully-loaded hourly rate ($)",value=65, min_value=10)
+    with l2b:
+        err_rate_pct = st.slider("Current error rate (%)", 0, 50, 10)
+        cost_per_err = st.number_input("Cost per error ($)",          value=400, min_value=0, step=50)
+        cycles_pw    = st.number_input("Process cycles per week",     value=50,  min_value=1)
+    with l2c:
+        coverage     = st.slider("Automation coverage (%)", 10, 100, 70)
+        ops_cost_wk  = st.number_input("Weekly run cost (infra+support $)", value=100, min_value=0, step=10)
+
+    labor_save_wk  = hrs_saved_wk * emp_rate * (coverage / 100)
+    error_save_wk  = cycles_pw * (err_rate_pct / 100) * cost_per_err * (coverage / 100) * 0.85
+    gross_save_wk  = labor_save_wk + error_save_wk
+    net_save_wk    = gross_save_wk - ops_cost_wk
+    annual_save    = net_save_wk * 52
+
+    s1, s2, s3, s4 = st.columns(4)
+    s1.metric("Labor savings / week",  f"${labor_save_wk:,.0f}")
+    s2.metric("Error savings / week",  f"${error_save_wk:,.0f}")
+    s3.metric("Run cost / week",       f"-${ops_cost_wk:,.0f}")
+    s4.metric("Net savings / week",    f"${net_save_wk:,.0f}", f"${annual_save:,.0f}/yr")
+
+    st.markdown('<hr class="divider">', unsafe_allow_html=True)
+
+    # ── Layer 3: Payback Period ───────────────────────────────────────────────
+    st.markdown("""
+    <div class="phase-box">
+      <h4>Layer 3 — Payback Period &nbsp;·&nbsp; Break-Even & Returns</h4>
+      <p>How long until the investment pays for itself, and what returns accumulate beyond that.</p>
+    </div>""", unsafe_allow_html=True)
+
+    payback_mo  = (total_build / (annual_save / 12)) if annual_save > 0 else 999
+    net_3yr     = annual_save * 3 - total_build
+    net_5yr     = annual_save * 5 - total_build
+    roi_3yr_pct = (net_3yr / total_build * 100) if total_build else 0
+
+    p1, p2, p3, p4 = st.columns(4)
+    p1.metric("Payback Period",   f"{payback_mo:.1f} mo" if payback_mo < 999 else "N/A")
+    p2.metric("Annual Net Savings", f"${annual_save:,.0f}")
+    p3.metric("3-Year Net ROI",   f"${net_3yr:,.0f}", f"{roi_3yr_pct:.0f}%")
+    p4.metric("5-Year Net ROI",   f"${net_5yr:,.0f}")
+
+    years = list(range(6))
+    cumulative = [annual_save * y - total_build for y in years]
+
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=[f"Year {y}" for y in years], y=[total_save*y for y in years],
-        name="Cumulative Savings", marker_color="#818cf8",
-        hovertemplate="<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
+        x=[f"Year {y}" for y in years],
+        y=[annual_save * y for y in years],
+        name="Cumulative Gross Savings",
+        marker_color="#818cf8",
+        hovertemplate="<b>%{x}</b><br>Gross savings: $%{y:,.0f}<extra></extra>",
     ))
     fig.add_trace(go.Scatter(
-        x=[f"Year {y}" for y in years], y=[total_save*y-impl_cst for y in years],
-        mode="lines+markers+text", name="Net ROI",
-        line=dict(color="#059669",width=3), marker=dict(size=8,color="#059669"),
-        text=[f"${total_save*y-impl_cst:,.0f}" for y in years],
-        textposition="top center", textfont=dict(size=10,color="#059669"),
+        x=[f"Year {y}" for y in years],
+        y=cumulative,
+        mode="lines+markers+text",
+        name="Net ROI (after build cost)",
+        line=dict(color="#059669", width=3),
+        marker=dict(size=8, color="#059669"),
+        text=[f"${v:,.0f}" for v in cumulative],
+        textposition="top center",
+        textfont=dict(size=10, color="#059669"),
     ))
-    fig.add_hline(y=0, line_dash="dot", line_color="#94a3b8", line_width=1)
-    styled_fig(fig, 340)
-    fig.update_layout(title="5-Year Savings & Net ROI",
-                      legend=dict(orientation="h",y=-0.18),
-                      yaxis_tickprefix="$", yaxis_tickformat=",")
+    fig.add_hline(y=0, line_dash="dot", line_color="#94a3b8", line_width=1.5,
+                  annotation_text="Break-even", annotation_position="right",
+                  annotation_font=dict(color="#94a3b8", size=10))
+    fig.add_hline(y=-total_build, line_dash="dot", line_color="#dc2626", line_width=1,
+                  annotation_text=f"Build cost ${total_build:,.0f}",
+                  annotation_position="right",
+                  annotation_font=dict(color="#dc2626", size=10))
+    styled_fig(fig, 360)
+    fig.update_layout(
+        title="5-Year Cumulative Savings vs Net ROI",
+        legend=dict(orientation="h", y=-0.18),
+        yaxis_tickprefix="$", yaxis_tickformat=",",
+    )
     st.plotly_chart(fig, use_container_width=True)
 
     st.dataframe(pd.DataFrame({
-        "Year":            [f"Year {y}" for y in years],
-        "Gross Savings":   [f"${total_save*y:,.0f}" for y in years],
-        "Net ROI":         [f"${total_save*y-impl_cst:,.0f}" for y in years],
-        "Cumulative ROI %":[f"{(total_save*y-impl_cst)/impl_cst*100:.0f}%" if impl_cst else "∞" for y in years],
+        "Year":                [f"Year {y}" for y in years],
+        "Gross Savings":       [f"${annual_save*y:,.0f}" for y in years],
+        "Build Cost":          [f"${total_build:,.0f}"] * len(years),
+        "Net ROI":             [f"${annual_save*y - total_build:,.0f}" for y in years],
+        "Cumulative ROI %":    [f"{(annual_save*y - total_build)/total_build*100:.0f}%" if total_build else "∞" for y in years],
+        "Weekly Run Savings":  [f"${net_save_wk:,.0f}"] * len(years),
     }), use_container_width=True, hide_index=True)
 
 
