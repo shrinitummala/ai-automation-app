@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -513,6 +514,27 @@ with st.sidebar:
     df_s = all_df()
     st.caption(f"**{len(df_s)}** automation ideas across **15** functions")
 
+# Replace broken sidebar icon text with arrow characters via JS
+components.html("""
+<script>
+function fixSidebarBtn() {
+    document.querySelectorAll('button').forEach(btn => {
+        const txt = btn.innerText || '';
+        if (txt.includes('keyboard_double_arrow_left')) {
+            btn.innerHTML = '<span style="font-size:1.1rem;color:#4f46e5">◀</span>';
+            btn.style.cssText += 'background:#f5f3ff;border:1.5px solid #c7d2fe;border-radius:8px;';
+        }
+        if (txt.includes('keyboard_double_arrow_right')) {
+            btn.innerHTML = '<span style="font-size:1.1rem;color:#4f46e5">▶</span>';
+            btn.style.cssText += 'background:#f5f3ff;border:1.5px solid #c7d2fe;border-radius:8px;';
+        }
+    });
+}
+// Run on load and observe DOM changes
+fixSidebarBtn();
+new MutationObserver(fixSidebarBtn).observe(document.body, { childList: true, subtree: true });
+</script>
+""", height=0)
 
 # ════════════════════════════════════════════════════════════════════════════
 # DASHBOARD
