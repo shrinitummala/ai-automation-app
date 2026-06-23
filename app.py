@@ -41,15 +41,15 @@ authenticator = stauth.Authenticate(
     config["cookie"]["expiry_days"],
 )
 
-name, authentication_status, username = authenticator.login(
-    location="main",
-    fields={"Form name": "AutomateIQ — Sign In", "Username": "Username", "Password": "Password", "Login": "Sign In"}
-)
+authenticator.login(location="main")
 
-if authentication_status is False:
+auth_status = st.session_state.get("authentication_status")
+name        = st.session_state.get("name", "")
+
+if auth_status is False:
     st.error("Incorrect username or password.")
     st.stop()
-elif authentication_status is None:
+elif auth_status is None:
     st.stop()
 
 # ── Authenticated — show logout in sidebar ────────────────────────────────────
