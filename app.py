@@ -41,15 +41,39 @@ authenticator = stauth.Authenticate(
     config["cookie"]["expiry_days"],
 )
 
-authenticator.login(location="main")
+st.markdown("""
+<div style="max-width:460px;margin:3rem auto 1rem;text-align:center">
+  <div style="font-size:2rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px">⚡ AutomateIQ</div>
+  <div style="font-size:0.9rem;color:#64748b;margin-top:4px">AI Process Automation Platform</div>
+</div>
+""", unsafe_allow_html=True)
+
+col_l, col_c, col_r = st.columns([1, 2, 1])
+with col_c:
+    tab_login, tab_request = st.tabs(["Sign In", "Request Access"])
+
+    with tab_login:
+        authenticator.login(location="main")
+        auth_status = st.session_state.get("authentication_status")
+        if auth_status is False:
+            st.error("Incorrect username or password.")
+
+    with tab_request:
+        st.markdown("#### Request Access")
+        st.caption("Fill in your details and the admin will set up your account.")
+        with st.form("access_request"):
+            req_name  = st.text_input("Full Name")
+            req_email = st.text_input("Work Email")
+            req_role  = st.text_input("Role / Company")
+            req_note  = st.text_area("Why do you need access?", height=80)
+            submitted = st.form_submit_button("Submit Request", type="primary", use_container_width=True)
+        if submitted and req_name and req_email:
+            st.success(f"Thanks {req_name}! Your request has been received. You'll get an email at {req_email} once your account is ready.")
 
 auth_status = st.session_state.get("authentication_status")
 name        = st.session_state.get("name", "")
 
-if auth_status is False:
-    st.error("Incorrect username or password.")
-    st.stop()
-elif auth_status is None:
+if auth_status is not True:
     st.stop()
 
 # ── Authenticated — show logout in sidebar ────────────────────────────────────
