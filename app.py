@@ -409,22 +409,40 @@ CAT_COLORS = [
 EFFORT_NUM = {"Low": 1, "Medium": 2, "High": 3}
 IMPACT_NUM = {"Low": 1, "Medium": 2, "High": 3}
 
+# One-time build cost estimates per effort tier (USD)
+BUILD_COST = {"Low": 8_000, "Medium": 20_000, "High": 50_000}
+HOURLY_RATE = 65  # blended employee cost $/hr
+
+
+def payback_months(effort, time_saved):
+    monthly_savings = time_saved * HOURLY_RATE * 52 / 12
+    return round(BUILD_COST[effort] / monthly_savings) if monthly_savings else 99
+
 
 def all_df():
     rows = []
     for cat, ideas in AUTOMATION_IDEAS.items():
         for idea in ideas:
-            rows.append({**idea, "category": cat})
+            row = {**idea, "category": cat}
+            row["payback"] = payback_months(idea["effort"], idea["time_saved"])
+            rows.append(row)
     return pd.DataFrame(rows)
 
 
 def effort_badge(e):
     cls = {"Low": "badge-green", "Medium": "badge-yellow", "High": "badge-red"}[e]
-    return f'<span class="badge {cls}">{e} Effort</span>'
+    return f'<span class="badge {cls}">Build: {e}</span>'
 
 def impact_badge(i):
     cls = {"Low": "badge-red", "Medium": "badge-yellow", "High": "badge-green"}[i]
     return f'<span class="badge {cls}">{i} Impact</span>'
+
+def savings_badge(h):
+    return f'<span class="badge badge-sky">Run savings: {h}h/wk</span>'
+
+def payback_badge(p):
+    cls = "badge-green" if p <= 6 else ("badge-yellow" if p <= 12 else "badge-red")
+    return f'<span class="badge {cls}">Payback: {p}mo</span>'
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -544,12 +562,11 @@ if page == "Dashboard":
                 <div style="flex:1;min-width:0">
                   <div class="idea-title">{r['idea']}</div>
                   <div class="idea-cat">{CAT_ICONS[r['category']]} {r['category']}</div>
-                  {effort_badge(r['effort'])} {impact_badge(r['impact'])}
+                  {effort_badge(r['effort'])} {impact_badge(r['impact'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                 </div>
                 <div style="text-align:right;flex-shrink:0">
                   <div style="font-size:1.6rem;font-weight:800;color:#4f46e5;line-height:1">{r['roi']}%</div>
                   <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px">ROI</div>
-                  <div style="font-size:0.75rem;color:#16a34a;font-weight:600;margin-top:2px">↓ {r['time_saved']}h/wk</div>
                 </div>
               </div>
             </div>""", unsafe_allow_html=True)
@@ -587,9 +604,7 @@ elif page == "Explore Library":
                   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
                     <div style="flex:1">
                       <div class="idea-title">{r['idea']}</div>
-                      {effort_badge(r['effort'])} {impact_badge(r['impact'])}
-                      <span class="badge badge-indigo">ROI {r['roi']}%</span>
-                      <span class="badge badge-sky">{r['time_saved']}h/wk saved</span>
+                      {effort_badge(r['effort'])} {impact_badge(r['impact'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                     </div>
                     <div style="background:#eef2ff;border-radius:8px;padding:6px 14px;text-align:center;flex-shrink:0">
                       <div style="font-size:1.15rem;font-weight:800;color:#4f46e5">{r['roi']}%</div>
@@ -652,8 +667,7 @@ elif page == "Analyze Process":
                     <div style="flex:1">
                       <div class="idea-title">{r['idea']}</div>
                       <div class="idea-cat">{CAT_ICONS[r['category']]} {r['category']}</div>
-                      {effort_badge(r['effort'])} {impact_badge(r['impact'])}
-                      <span class="badge badge-sky">{r['time_saved']}h/wk saved</span>
+                      {effort_badge(r['effort'])} {impact_badge(r['impact'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                     </div>
                     <div style="text-align:right;flex-shrink:0">
                       <div style="font-size:1.5rem;font-weight:800;color:#4f46e5">{r['roi']}%</div>
@@ -941,8 +955,7 @@ elif page == "Implementation Plan":
                     <div style="flex:1">
                       <div class="idea-title">{r['idea']}</div>
                       <div class="idea-cat">{CAT_ICONS[r['category']]} {r['category']}</div>
-                      {effort_badge(r['effort'])} {impact_badge(r['impact'])}
-                      <span class="badge badge-sky">{r['time_saved']}h/wk saved</span>
+                      {effort_badge(r['effort'])} {impact_badge(r['impact'])} {savings_badge(r['time_saved'])} {payback_badge(r['payback'])}
                     </div>
                     <div style="text-align:right;flex-shrink:0">
                       <div style="font-size:1.4rem;font-weight:800;color:#4f46e5">{r['roi']}%</div>
@@ -977,7 +990,7 @@ elif page == "Implementation Plan":
             if p_df.empty: continue
             lines += [f"\n{p_s}: {p_t} ({p_r})", "-"*40]
             for _,r in p_df.iterrows():
-                lines.append(f"  • {r['idea']} ({r['category']}) — ROI {r['roi']}% | {r['effort']} Effort | {r['time_saved']}h/wk saved")
+                lines.append(f"  • {r['idea']} ({r['category']}) — Build: {r['effort']} | Run savings: {r['time_saved']}h/wk | Payback: {r['payback']}mo | ROI {r['roi']}%")
         st.download_button("⬇️ Export Roadmap", "\n".join(lines),
                            file_name="automation_roadmap.txt", mime="text/plain")
 
