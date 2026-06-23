@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -12,6 +11,7 @@ st.set_page_config(
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded",
+    menu_items={}
 )
 
 # Minimal, reliable CSS — only targets elements Streamlit exposes stably
@@ -94,24 +94,10 @@ html, body, div, p, span, h1, h2, h3, h4, button, input, label, select, textarea
 
 hr.divider { border: none; border-top: 1px solid #f1f5f9; margin: 1.4rem 0; }
 
-/* Sidebar toggle — hide icon name text, show arrow via pseudo-element */
-[data-testid="stSidebarCollapseButton"] button,
-[data-testid="stSidebarCollapsedControl"] button,
-[data-testid="collapsedControl"] button {
-    background: #f5f3ff !important;
-    border: 1.5px solid #c7d2fe !important;
-    border-radius: 8px !important;
-    position: relative !important;
-}
-[data-testid="stSidebarCollapseButton"] button span,
-[data-testid="stSidebarCollapsedControl"] button span,
-[data-testid="collapsedControl"] button span {
-    font-size: 0 !important;
-    visibility: hidden !important;
-}
-[data-testid="stSidebarCollapseButton"] button::after { content: "◀"; color: #4f46e5; font-size: 1rem; }
-[data-testid="stSidebarCollapsedControl"] button::after,
-[data-testid="collapsedControl"] button::after { content: "▶"; color: #4f46e5; font-size: 1rem; }
+/* Hide sidebar collapse/expand buttons entirely */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"] { display: none !important; }
 
 /* Fix expander label */
 details summary p, details summary span, .streamlit-expanderHeader p {
@@ -514,26 +500,6 @@ with st.sidebar:
     df_s = all_df()
     st.caption(f"**{len(df_s)}** automation ideas across **15** functions")
 
-# Replace broken sidebar icon text with arrow characters via JS in main document
-st.markdown("""
-<script>
-function fixSidebarBtn() {
-    document.querySelectorAll('button').forEach(btn => {
-        const txt = btn.innerText || '';
-        if (txt.includes('keyboard_double_arrow_left')) {
-            btn.innerHTML = '<span style="font-size:1.1rem;color:#4f46e5;pointer-events:none">◀</span>';
-            btn.style.cssText += 'background:#f5f3ff!important;border:1.5px solid #c7d2fe!important;border-radius:8px!important;';
-        }
-        if (txt.includes('keyboard_double_arrow_right')) {
-            btn.innerHTML = '<span style="font-size:1.1rem;color:#4f46e5;pointer-events:none">▶</span>';
-            btn.style.cssText += 'background:#f5f3ff!important;border:1.5px solid #c7d2fe!important;border-radius:8px!important;';
-        }
-    });
-}
-fixSidebarBtn();
-new MutationObserver(fixSidebarBtn).observe(document.body, {childList:true, subtree:true});
-</script>
-""", unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════════════════════════
 # DASHBOARD
