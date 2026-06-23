@@ -93,24 +93,24 @@ html, body, div, p, span, h1, h2, h3, h4, button, input, label, select, textarea
 
 hr.divider { border: none; border-top: 1px solid #f1f5f9; margin: 1.4rem 0; }
 
-/* Load Material Icons so sidebar toggle renders as icon not text */
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-.material-icons { font-family: 'Material Icons' !important; }
-
-/* Style the sidebar toggle buttons */
+/* Sidebar toggle — hide icon name text, show arrow via pseudo-element */
 [data-testid="stSidebarCollapseButton"] button,
 [data-testid="stSidebarCollapsedControl"] button,
 [data-testid="collapsedControl"] button {
     background: #f5f3ff !important;
     border: 1.5px solid #c7d2fe !important;
     border-radius: 8px !important;
+    position: relative !important;
 }
 [data-testid="stSidebarCollapseButton"] button span,
 [data-testid="stSidebarCollapsedControl"] button span,
 [data-testid="collapsedControl"] button span {
-    font-family: 'Material Icons' !important;
-    color: #4f46e5 !important;
+    font-size: 0 !important;
+    visibility: hidden !important;
 }
+[data-testid="stSidebarCollapseButton"] button::after { content: "◀"; color: #4f46e5; font-size: 1rem; }
+[data-testid="stSidebarCollapsedControl"] button::after,
+[data-testid="collapsedControl"] button::after { content: "▶"; color: #4f46e5; font-size: 1rem; }
 
 /* Fix expander label */
 details summary p, details summary span, .streamlit-expanderHeader p {
