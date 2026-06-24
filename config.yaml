@@ -8,6 +8,10 @@ credentials:
       email: anindito.dee@wipro.com
       name: Anindito Dee
       password: "$2b$12$8TjiN8kB5bXubPzEyYyV9uYaIZIfWroXtgzPXEaM/iTprgedqYXk6"  # Welcome$123
+    rajasekhar:
+      email: rajasekhar.ramadas@wipro.com
+      name: Rajasekhar Ramadas
+      password: "$2b$12$8TjiN8kB5bXubPzEyYyV9uYaIZIfWroXtgzPXEaM/iTprgedqYXk6"  # Welcome$123
 
 cookie:
   expiry_days: 7
